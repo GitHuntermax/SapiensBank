@@ -1,40 +1,19 @@
-﻿using System.Text.Json;
+using System.Collections.Generic;
 
-public class Banco
+namespace SapiensBank
 {
-    public List<Conta> Contas { get; set; } = new List<Conta>();
-
-    public Banco()
+    public class Banco
     {
-        GetContas();
-    }
+        public List<Conta> Contas { get; private set; } = new List<Conta>();
 
-    public void GetContas()
-    {
-        var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        var fullPath = Path.Combine(path, "SapiensBank", "banco.json");
-        if (File.Exists(fullPath))
+        public Conta? EncontrarConta(int numero, string senha)
         {
-            var json = File.ReadAllText(fullPath);
-            var contas = JsonSerializer.Deserialize<List<Conta>>(json);
-            if (contas != null)
-            {
-                Contas = contas;
-            }
+            return Contas.Find(c => c.Numero == numero && c.Senha == senha);
         }
-    } 
 
-    public void SaveContas()
-    {
-        var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        var directoryPath = Path.Combine(path, "SapiensBank");
-        if (!Directory.Exists(directoryPath))
+        public void AdicionarConta(Conta conta)
         {
-            Directory.CreateDirectory(directoryPath);
+            Contas.Add(conta);
         }
-        var fullPath = Path.Combine(directoryPath, "banco.json");
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        var json = JsonSerializer.Serialize(Contas, options);
-        File.WriteAllText(fullPath, json);
     }
 }
